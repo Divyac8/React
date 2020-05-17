@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+#sticky-sidebar {
+    margin: 0;
+    padding: 0;
+    width: 35px;
+    background-color: gray;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+span {
+    color: burlywood;
+}
+
+#sticky-sidebar a {
+    padding: 6px 8px 6px 5px;
+    text-decoration: none;
+    font-size: 25px;
+    display: block;
+}
+
+#sticky-sidebar button {
+    background-color: gray;
+    border: 1px;
+    font-size: 22px;
+}
+
+label {
+    float: left;
+}
+
+.btn-register {
+    float: left !important;
+    margin: 15px !important;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.login-page {
+    float: left;
+    margin: 14px;
+}
+
+.register-page {
+    float: left;
+    margin: 20px;
+}
