@@ -9,7 +9,8 @@ class Movie extends Component {
         id:'',
         name:'',
         director:'',
-        records:[]
+        records:[],
+        editshowing: true
         
 
 
@@ -17,13 +18,42 @@ class Movie extends Component {
     }
 
     }
-    handleUpdate = record => {
-        console.log("updated")
+    handleUpdate = async record => {
+        console.log("updated");
+        const { editshowing } = this.state;
+        const formData = new FormData();
+        formData.append('record', record);
+        
+
+        const headers ={
+            'X-AUTH-TOKEN':sessionStorage.getItem('token'),
+            'Content-Type':'application/json'
+        }
+        
+        await axios.patch('http://18.219.121.39:8080/movie' + "/" + record.id,record,{
+            headers:headers
+        });
+        this.setState({ editshowing: !editshowing })
+        
+        
+        
 
 
     };
-    handleDelete = record =>{
+    handleDelete =async record =>{
         console.log("deleted")
+        const records = this.state.records.filter(p => p.id !== record.id)
+        this.setState({records})
+        const headers ={
+            'X-AUTH-TOKEN':sessionStorage.getItem('token'),
+            'Content-Type':'application/json'
+        }
+      
+      await axios.delete( 'http://18.219.121.39:8080/movie'+ "/" + record.id,{
+        headers:headers
+
+      })
+        
     }
 
     handelChange=(e)=>{
@@ -70,7 +100,9 @@ class Movie extends Component {
         
         .then(res => {
         
-        this.setState({ movies:res.movies });
+        this.setState({ records:res.data });
+        console.log(res);
+        
         
         })
       
@@ -78,6 +110,7 @@ class Movie extends Component {
     }    
     render() { 
         const { showing } = this.state;
+        const {editshowing}= this.state;
         //const {movies} = this.state;
         return ( 
             <div className="container">
@@ -93,17 +126,22 @@ class Movie extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.state.records.map(record =>{
-                        <tr>
-                        <td>{record.id}</td>    
+                    {this.state.records.map( record =>{
+
+                        return <tr>
+                        <td key={record.id}>{record.id}</td>    
                         <td>{record.name}</td>
                         <td>{record.director}</td>
-                        <td><button className="btn btn-danger" onClick={() => this.handleUpdate(record)}>Edit</button>
+                        <td><button className="btn btn-success" onClick={() => this.handleUpdate(record)}>Edit</button>
                         <button className="btn btn-danger" onClick ={() => this.handleDelete(record)}>Delete</button>
                         </td>                        
                         
                         </tr>
-                    })
+
+
+                    }
+                        
+                    )
                 }
                         
                     
@@ -112,6 +150,44 @@ class Movie extends Component {
 
 
             </table>
+            {editshowing 
+                    ? showing
+    
+                    : <div className="record" id="movie_record">
+                
+                    <form className="form-group offset-lg-4" onSubmit={this.handelSubmit}  >
+                    
+                    
+                        {this.state.records.filter(records => records.id).map(edit => {
+                          <div class="form-group col-md-6">
+                            <label>Movie Name</label>
+                            <input type="text" key={edit.id} className="form-control" name="name" onChange={this.handelChange} value={edit.name}/>
+                        
+                            <label>Director </label>
+                            <input type="text" className="form-control" name="director" onChange={this.handelChange} value={edit.director} />
+                        </div>
+
+                        })}
+                        
+                    
+                        
+                        
+                 
+                        <button  className="btn btn-success btn-record" >Update</button>
+                    </form>
+             
+        
+                    </div>
+                }
+{/* 
+<ul>
+        {
+          this.state.records.map(function(movie){
+            return <li key={movie.id}>{movie.id} - {movie.name}</li>;
+          })
+        }
+        </ul> */}
+
             <div>
             <button className="btn btn-link"  onClick={() => this.setState({ showing: !showing })}>
                 <h4>Add a New Movie Record</h4>
